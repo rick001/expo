@@ -23,7 +23,20 @@ const MarketingBanner = ({ exhibitor, onUpdate }) => {
     }
   };
 
+  const handleDownloadBanner = () => {
+    if (exhibitor.marketingBanner && exhibitor.marketingBanner.imagePath) {
+      // Create a temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = `/${exhibitor.marketingBanner.imagePath}`;
+      link.download = `marketing-banner-${exhibitor.companyName.replace(/\s+/g, '-').toLowerCase()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const hasLogo = exhibitor.logo && exhibitor.logo.filename;
+  const hasApprovedLogo = exhibitor.logo && exhibitor.logo.filename && exhibitor.logo.approved;
   const hasBanner = exhibitor.marketingBanner && exhibitor.marketingBanner.generated;
 
   if (!hasLogo) {
@@ -41,6 +54,29 @@ const MarketingBanner = ({ exhibitor, onUpdate }) => {
               <h4 className="text-sm font-medium text-amber-800">Logo Required</h4>
               <p className="text-sm text-amber-700 mt-1">
                 Please upload your company logo first before generating a marketing banner.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasApprovedLogo) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center mb-4">
+          <Image className="h-5 w-5 text-blue-600 mr-2" />
+          <h3 className="text-lg font-semibold text-gray-900">Marketing Banner</h3>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
+          <div className="flex">
+            <Image className="h-5 w-5 text-amber-400 mr-2" />
+            <div>
+              <h4 className="text-sm font-medium text-amber-800">Logo Pending Approval</h4>
+              <p className="text-sm text-amber-700 mt-1">
+                Your logo has been uploaded and is pending admin approval. Once approved, you can generate your marketing banner.
               </p>
             </div>
           </div>
@@ -68,17 +104,20 @@ const MarketingBanner = ({ exhibitor, onUpdate }) => {
             </div>
             <div className="bg-white bg-opacity-20 rounded-lg p-4 inline-block">
               <div className="w-16 h-16 bg-white rounded-lg mx-auto mb-2 flex items-center justify-center">
-                {exhibitor.logo && exhibitor.logo.filename ? (
+                {hasApprovedLogo ? (
                   <img 
                     src={`/uploads/logos/${exhibitor.logo.filename}`}
                     alt={`${exhibitor.companyName} logo`}
                     className="w-12 h-12 object-contain"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
                   />
-                ) : (
-                  <span className="text-blue-600 font-bold text-lg">
-                    {exhibitor.companyName.charAt(0)}
-                  </span>
-                )}
+                ) : null}
+                <span className={`text-blue-600 font-bold text-lg ${hasApprovedLogo ? 'hidden' : ''}`}>
+                  {exhibitor.companyName.charAt(0)}
+                </span>
               </div>
               <p className="font-semibold">{exhibitor.companyName}</p>
             </div>
@@ -88,13 +127,20 @@ const MarketingBanner = ({ exhibitor, onUpdate }) => {
           </div>
 
           <div className="flex space-x-3">
-            <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <button 
+              onClick={handleDownloadBanner}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
               <Download className="h-4 w-4 mr-2" />
               Download Banner
             </button>
-            <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+            <button 
+              onClick={handleGenerateBanner}
+              disabled={generating}
+              className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <Sparkles className="h-4 w-4 mr-2" />
-              Regenerate
+              {generating ? 'Regenerating...' : 'Regenerate'}
             </button>
           </div>
 
@@ -133,17 +179,20 @@ const MarketingBanner = ({ exhibitor, onUpdate }) => {
               </div>
               <div className="bg-white bg-opacity-20 rounded-lg p-3 inline-block">
                 <div className="w-12 h-12 bg-white rounded-lg mx-auto mb-2 flex items-center justify-center">
-                  {exhibitor.logo && exhibitor.logo.filename ? (
+                  {hasApprovedLogo ? (
                     <img 
                       src={`/uploads/logos/${exhibitor.logo.filename}`}
                       alt={`${exhibitor.companyName} logo`}
                       className="w-8 h-8 object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'block';
+                      }}
                     />
-                  ) : (
-                    <span className="text-blue-600 font-bold">
-                      {exhibitor.companyName.charAt(0)}
-                    </span>
-                  )}
+                  ) : null}
+                  <span className={`text-blue-600 font-bold ${hasApprovedLogo ? 'hidden' : ''}`}>
+                    {exhibitor.companyName.charAt(0)}
+                  </span>
                 </div>
                 <p className="font-semibold text-sm">{exhibitor.companyName}</p>
               </div>

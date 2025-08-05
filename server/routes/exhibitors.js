@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { generateBannerWithLogo } = require('../utils/bannerGenerator');
 const Exhibitor = require('../models/Exhibitor');
 
 const router = express.Router();
@@ -9,7 +10,7 @@ const router = express.Router();
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = 'uploads/logos';
+    const uploadDir = path.join(__dirname, '..', 'uploads', 'logos');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -25,12 +26,14 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
+    console.log('Processing file:', file.originalname, file.mimetype);
     const allowedTypes = /jpeg|jpg|png|gif/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
     if (mimetype && extname) {
       return cb(null, true);
     } else {
+      console.error('File type not allowed:', file.originalname, file.mimetype);
       cb(new Error('Only image files are allowed!'));
     }
   }
@@ -83,6 +86,8 @@ router.post('/upload-logo', requireAuth, upload.single('logo'), async (req, res)
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
+    console.log('File uploaded:', req.file);
+
     const exhibitor = await Exhibitor.findById(req.session.userId);
     if (!exhibitor) {
       return res.status(404).json({ error: 'Exhibitor not found' });
@@ -97,11 +102,14 @@ router.post('/upload-logo', requireAuth, upload.single('logo'), async (req, res)
     exhibitor.onboardingChecklist.logoUploaded = true;
     await exhibitor.save();
 
+    console.log('Logo saved to database:', exhibitor.logo);
+
     res.json({
       message: 'Logo uploaded successfully',
       logo: exhibitor.logo
     });
   } catch (error) {
+    console.error('Logo upload error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -200,21 +208,36 @@ router.post('/generate-banner', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Logo must be uploaded first' });
     }
 
-    // Simulate banner generation
+    if (!exhibitor.logo.approved) {
+      return res.status(400).json({ error: 'Logo must be approved by admin before generating banner' });
+    }
+
+    // Generate banner with approved logo
     const bannerPath = `uploads/banners/banner-${exhibitor._id}-${Date.now()}.png`;
+    
+    // Actually generate the banner image with the logo
+    const bannerGenerated = await generateBannerWithLogo(exhibitor, bannerPath);
+    
+    if (!bannerGenerated) {
+      return res.status(500).json({ error: 'Failed to generate banner image' });
+    }
+
     exhibitor.marketingBanner = {
       generated: true,
       imagePath: bannerPath,
-      eventName: exhibitor.marketingBanner.eventName
+      eventName: exhibitor.marketingBanner?.eventName || 'Small Business Expo 2024'
     };
     exhibitor.onboardingChecklist.marketingBannerGenerated = true;
     await exhibitor.save();
+
+    console.log('Banner generated for:', exhibitor.companyName, 'with logo:', exhibitor.logo.filename);
 
     res.json({
       message: 'Marketing banner generated successfully',
       marketingBanner: exhibitor.marketingBanner
     });
   } catch (error) {
+    console.error('Banner generation error:', error);
     res.status(500).json({ error: error.message });
   }
 });

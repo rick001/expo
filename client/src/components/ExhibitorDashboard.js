@@ -11,7 +11,8 @@ import {
   Image,
   ArrowUpRight,
   MessageCircle,
-  Settings
+  Settings,
+  RefreshCw
 } from 'lucide-react';
 import LogoUpload from './LogoUpload';
 import CompanyInfoForm from './CompanyInfoForm';
@@ -29,6 +30,11 @@ const ExhibitorDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    
+    // Refresh data every 30 seconds to catch updates from admin
+    const interval = setInterval(fetchDashboardData, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -87,6 +93,13 @@ const ExhibitorDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={fetchDashboardData}
+                className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                title="Refresh Dashboard"
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
               <button
                 onClick={() => setShowChatbot(!showChatbot)}
                 className="p-2 text-gray-600 hover:text-blue-600 transition-colors"

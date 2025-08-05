@@ -49,11 +49,33 @@ router.put('/exhibitors/:id/logo', requireAdmin, async (req, res) => {
     }
 
     exhibitor.logo.approved = approved;
+    
+    // Auto-regenerate marketing banner when logo is approved
+    if (approved && exhibitor.logo.filename) {
+      const bannerPath = `uploads/banners/banner-${exhibitor._id}-${Date.now()}.png`;
+      
+      // Import the banner generation function
+      const { generateBannerWithLogo } = require('../utils/bannerGenerator');
+      
+      // Actually generate the banner image with the logo
+      const bannerGenerated = await generateBannerWithLogo(exhibitor, bannerPath);
+      
+      if (bannerGenerated) {
+        exhibitor.marketingBanner = {
+          generated: true,
+          imagePath: bannerPath,
+          eventName: exhibitor.marketingBanner?.eventName || 'Small Business Expo 2024'
+        };
+        exhibitor.onboardingChecklist.marketingBannerGenerated = true;
+      }
+    }
+    
     await exhibitor.save();
 
     res.json({
       message: `Logo ${approved ? 'approved' : 'rejected'} successfully`,
-      logo: exhibitor.logo
+      logo: exhibitor.logo,
+      marketingBanner: exhibitor.marketingBanner
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -184,6 +206,109 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       }
     });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create new exhibitor
+router.post('/exhibitors', requireAdmin, async (req, res) => {
+  try {
+    const { 
+      email, 
+      password, 
+      companyName, 
+      contactName, 
+      phone, 
+      website,
+      boothNumber,
+      boothSize = '10x10',
+      paymentStatus = 'Pending'
+    } = req.body;
+
+    // Check if exhibitor already exists
+    const existingExhibitor = await Exhibitor.findOne({ email });
+    if (existingExhibitor) {
+      return res.status(400).json({ error: 'Exhibitor with this email already exists' });
+    }
+
+    // Create new exhibitor
+    const exhibitor = new Exhibitor({
+      email,
+      password, // Will be hashed by the model
+      companyName,
+      contactName,
+      phone,
+      website,
+      boothNumber,
+      boothSize,
+      paymentStatus,
+      onboardingChecklist: {
+        logoUploaded: false,
+        companyInfoSubmitted: false,
+        webinarDateSelected: false,
+        boothUpgradeRequested: false,
+        marketingBannerGenerated: false
+      }
+    });
+
+    await exhibitor.save();
+
+    res.status(201).json({
+      message: 'Exhibitor created successfully',
+      exhibitor: {
+        id: exhibitor._id,
+        email: exhibitor.email,
+        companyName: exhibitor.companyName,
+        contactName: exhibitor.contactName,
+        phone: exhibitor.phone,
+        website: exhibitor.website,
+        boothNumber: exhibitor.boothNumber,
+        boothSize: exhibitor.boothSize,
+        paymentStatus: exhibitor.paymentStatus
+      }
+    });
+  } catch (error) {
+    console.error('Error creating exhibitor:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Reset database for demo purposes
+router.post('/reset-demo', requireAdmin, async (req, res) => {
+  try {
+    // Delete all exhibitors except admin
+    await Exhibitor.deleteMany({ email: { $ne: 'admin@expo.com' } });
+    
+    // Clear uploaded files (logos and banners)
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Clear logos directory
+    const logosDir = path.join(__dirname, '..', 'uploads', 'logos');
+    if (fs.existsSync(logosDir)) {
+      const logoFiles = fs.readdirSync(logosDir);
+      logoFiles.forEach(file => {
+        if (file !== 'test-logo.svg') { // Keep test logo
+          fs.unlinkSync(path.join(logosDir, file));
+        }
+      });
+    }
+    
+    // Clear banners directory
+    const bannersDir = path.join(__dirname, '..', 'uploads', 'banners');
+    if (fs.existsSync(bannersDir)) {
+      const bannerFiles = fs.readdirSync(bannersDir);
+      bannerFiles.forEach(file => {
+        fs.unlinkSync(path.join(bannersDir, file));
+      });
+    }
+    
+    res.json({
+      message: 'Database reset successfully for demo. All exhibitors, logos, and banners have been cleared.',
+      reset: true
+    });
+  } catch (error) {
+    console.error('Error resetting database:', error);
     res.status(500).json({ error: error.message });
   }
 });
