@@ -8,10 +8,10 @@ async function generateBannerWithLogo(exhibitor, bannerPath) {
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext('2d');
 
-    // Create gradient background
+    // Create gradient background with green colors
     const gradient = ctx.createLinearGradient(0, 0, 800, 0);
-    gradient.addColorStop(0, '#3B82F6'); // Blue
-    gradient.addColorStop(1, '#8B5CF6'); // Purple
+    gradient.addColorStop(0, '#3d8b5a'); // Dark green
+    gradient.addColorStop(1, '#2f6f47'); // Darker green
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 800, 400);
 
@@ -44,7 +44,7 @@ async function generateBannerWithLogo(exhibitor, bannerPath) {
         ctx.arc(400, 200, 50, 0, 2 * Math.PI);
         ctx.fill();
         
-        ctx.fillStyle = '#3B82F6';
+        ctx.fillStyle = '#3d8b5a';
         ctx.font = 'bold 36px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -57,32 +57,31 @@ async function generateBannerWithLogo(exhibitor, bannerPath) {
     ctx.font = 'bold 32px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(exhibitor.marketingBanner?.eventName || 'Small Business Expo 2024', 400, 80);
-
-    // Draw "Featuring" text
-    ctx.font = '18px Arial';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.fillText('Featuring', 400, 120);
+    ctx.fillText(exhibitor.marketingBanner?.eventName || 'Small Business Expo 2024', 400, 100);
 
     // Draw company name
-    ctx.font = 'bold 24px Arial';
     ctx.fillStyle = 'white';
-    ctx.fillText(exhibitor.companyName, 400, 280);
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText(exhibitor.companyName, 400, 300);
 
     // Draw booth information
-    ctx.font = '16px Arial';
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    const boothInfo = `Booth ${exhibitor.boothNumber || 'TBD'} • ${exhibitor.boothSize}`;
-    ctx.fillText(boothInfo, 400, 320);
+    ctx.font = '16px Arial';
+    ctx.fillText(`Booth ${exhibitor.boothNumber || 'TBD'} • ${exhibitor.boothSize}`, 400, 330);
 
     // Save the banner
-    const buffer = canvas.toBuffer('image/png');
-    const bannerDir = path.dirname(path.join(__dirname, '..', bannerPath));
+    const bannerFullPath = path.join(__dirname, '..', bannerPath);
+    const bannerDir = path.dirname(bannerFullPath);
+    
+    // Ensure the banners directory exists
     if (!fs.existsSync(bannerDir)) {
       fs.mkdirSync(bannerDir, { recursive: true });
     }
-    fs.writeFileSync(path.join(__dirname, '..', bannerPath), buffer);
-
+    
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync(bannerFullPath, buffer);
+    
+    console.log(`Banner generated successfully: ${bannerPath}`);
     return true;
   } catch (error) {
     console.error('Error generating banner:', error);
