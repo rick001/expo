@@ -67,7 +67,7 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
     return (
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center mb-4">
-          <Calendar className="h-5 w-5 text-blue-600 mr-2" />
+          <Calendar className="h-5 w-5 text-green-600 mr-2" />
           <h3 className="text-lg font-semibold text-gray-900">Webinar Date Selection</h3>
         </div>
 
@@ -90,8 +90,8 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center mb-4">
-        <Calendar className="h-5 w-5 text-blue-600 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-900">Webinar Date Selection</h3>
+        <Calendar className="h-5 w-5 text-green-600 mr-2" />
+        <h3 className="text-lg font-semibold text-gray-900">Webinar Scheduling</h3>
         {hasSelectedDate && (
           <CheckCircle className="h-5 w-5 text-green-600 ml-2" />
         )}
@@ -113,7 +113,7 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
           
           <div className="bg-blue-50 p-4 rounded-md">
             <h4 className="text-sm font-medium text-blue-800 mb-2">What to expect:</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
+            <ul className="text-sm text-green-700 space-y-1">
               <li>• You'll receive a confirmation email with webinar details</li>
               <li>• A calendar invitation will be sent to your email</li>
               <li>• Technical support will be available 15 minutes before the session</li>
@@ -123,12 +123,12 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
       ) : (
         <div className="space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <div className="flex">
-              <Clock className="h-5 w-5 text-blue-400 mr-2" />
+            <div className="flex items-center">
+              <Clock className="h-5 w-5 text-green-400 mr-2" />
               <div>
-                <h4 className="text-sm font-medium text-blue-800">Available Webinar Slots</h4>
-                <p className="text-sm text-blue-700 mt-1">
-                  Select a date and time for your promotional webinar session.
+                <h4 className="text-sm font-medium text-gray-900">Webinar Details</h4>
+                <p className="text-sm text-green-700 mt-1">
+                  Select a date for your promotional webinar presentation
                 </p>
               </div>
             </div>
@@ -149,7 +149,7 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
                 >
                   <option value="">Choose a date and time...</option>
                   {availableDates.map((date, index) => (
@@ -163,7 +163,7 @@ const WebinarDatePicker = ({ exhibitor, onUpdate }) => {
               <button
                 type="submit"
                 disabled={submitting || !selectedDate}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <div className="spinner mr-2"></div>

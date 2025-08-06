@@ -68,13 +68,14 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
   };
 
   const hasSubmitted = exhibitor.companyInfo && exhibitor.companyInfo.description;
+  const hasCompanyInfo = exhibitor.companyInfo && exhibitor.companyInfo.description;
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center mb-4">
-        <Building2 className="h-5 w-5 text-blue-600 mr-2" />
+        <Building2 className="h-5 w-5 text-green-600 mr-2" />
         <h3 className="text-lg font-semibold text-gray-900">Company Information</h3>
-        {hasSubmitted && exhibitor.companyInfo.approved && (
+        {hasCompanyInfo && (
           <CheckCircle className="h-5 w-5 text-green-600 ml-2" />
         )}
       </div>
@@ -121,7 +122,7 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
               onChange={(e) => handleInputChange('description', e.target.value)}
               rows={4}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
               placeholder="Describe your company, what you do, and what makes you unique..."
             />
           </div>
@@ -136,7 +137,7 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
                   type="text"
                   value={product}
                   onChange={(e) => handleProductChange(index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder={`Product/Service ${index + 1}`}
                   required={index === 0}
                 />
@@ -154,7 +155,7 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
             <button
               type="button"
               onClick={addProduct}
-              className="flex items-center text-sm text-blue-600 hover:text-blue-800"
+              className="flex items-center text-sm text-green-600 hover:text-green-800"
             >
               <Plus className="h-4 w-4 mr-1" />
               Add another product/service
@@ -171,7 +172,7 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
               value={formData.targetAudience}
               onChange={(e) => handleInputChange('targetAudience', e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
               placeholder="e.g., Small business owners, IT professionals, etc."
             />
           </div>
@@ -179,7 +180,7 @@ const CompanyInfoForm = ({ exhibitor, onUpdate }) => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <div className="spinner mr-2"></div>

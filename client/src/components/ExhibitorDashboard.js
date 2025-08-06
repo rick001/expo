@@ -3,13 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { 
   LogOut, 
-  Upload, 
   CheckCircle, 
-  Circle, 
   Building2, 
   Calendar,
   Image,
-  ArrowUpRight,
   MessageCircle,
   Settings,
   RefreshCw
@@ -22,7 +19,7 @@ import BoothUpgrade from './BoothUpgrade';
 import Chatbot from './Chatbot';
 
 const ExhibitorDashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [exhibitor, setExhibitor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -82,12 +79,16 @@ const ExhibitorDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Building2 className="h-8 w-8 text-blue-600 mr-3" />
+              <img 
+                src="/sbe-logo-greenblock-resized.png" 
+                alt="Smart Exhibitor Portal Logo" 
+                className="h-10 w-10 sm:h-12 sm:w-12 object-contain mr-3 sm:mr-4"
+              />
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">
+                <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
                   Smart Exhibitor Portal
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Welcome, {exhibitor.contactName} ({exhibitor.companyName})
                 </p>
               </div>
@@ -95,14 +96,14 @@ const ExhibitorDashboard = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={fetchDashboardData}
-                className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                className="p-2 text-gray-600 hover:text-green-600 transition-colors"
                 title="Refresh Dashboard"
               >
                 <RefreshCw className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setShowChatbot(!showChatbot)}
-                className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                className="p-2 text-gray-600 hover:text-green-600 transition-colors"
                 title="Help & FAQ"
               >
                 <MessageCircle className="h-5 w-5" />
@@ -135,7 +136,7 @@ const ExhibitorDashboard = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700'
+                      ? 'bg-green-100 text-green-700'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -167,7 +168,7 @@ const ExhibitorDashboard = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${getChecklistProgress()}%` }}
                   ></div>
                 </div>
@@ -175,9 +176,9 @@ const ExhibitorDashboard = () => {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="bg-green-50 p-4 rounded-lg">
                   <div className="flex items-center">
-                    <CheckCircle className="h-8 w-8 text-blue-600 mr-3" />
+                    <CheckCircle className="h-8 w-8 text-green-600 mr-3" />
                     <div>
                       <p className="text-sm text-gray-600">Booth Number</p>
                       <p className="text-lg font-semibold text-gray-900">{exhibitor.boothNumber || 'TBD'}</p>
@@ -193,9 +194,9 @@ const ExhibitorDashboard = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="bg-green-50 p-4 rounded-lg">
                   <div className="flex items-center">
-                    <Image className="h-8 w-8 text-purple-600 mr-3" />
+                    <Image className="h-8 w-8 text-green-600 mr-3" />
                     <div>
                       <p className="text-sm text-gray-600">Booth Size</p>
                       <p className="text-lg font-semibold text-gray-900">{exhibitor.boothSize}</p>
@@ -207,33 +208,28 @@ const ExhibitorDashboard = () => {
 
             {/* Onboarding Checklist */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Onboarding Checklist</h3>
-              <div className="space-y-3">
-                {[
-                  { key: 'logoUploaded', label: 'Upload Company Logo', icon: Upload },
-                  { key: 'companyInfoSubmitted', label: 'Submit Company Information', icon: Building2 },
-                  { key: 'webinarDateSelected', label: 'Select Webinar Date', icon: Calendar },
-                  { key: 'marketingBannerGenerated', label: 'Generate Marketing Banner', icon: Image }
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const isCompleted = exhibitor.onboardingChecklist[item.key];
-                  return (
-                    <div key={item.key} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      {isCompleted ? (
-                        <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                      ) : (
-                        <Circle className="h-5 w-5 text-gray-400 mr-3" />
-                      )}
-                      <Icon className="h-4 w-4 text-gray-500 mr-3" />
-                      <span className={`flex-1 ${isCompleted ? 'text-gray-900' : 'text-gray-600'}`}>
-                        {item.label}
-                      </span>
-                      {isCompleted && (
-                        <span className="text-sm text-green-600 font-medium">Completed</span>
-                      )}
-                    </div>
-                  );
-                })}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Onboarding Progress</h3>
+                <span className="text-sm font-medium text-green-600">{getChecklistProgress()}% Complete</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Progress</span>
+                  <span className="text-sm font-medium text-gray-900">{getChecklistProgress()}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${getChecklistProgress()}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-8 w-8 text-green-600 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Onboarding Checklist</p>
+                    <p className="text-xs text-gray-500">Complete all steps to get ready for the event</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

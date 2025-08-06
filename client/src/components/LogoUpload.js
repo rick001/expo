@@ -50,9 +50,9 @@ const LogoUpload = ({ exhibitor, onUpdate }) => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center mb-4">
-        <Upload className="h-5 w-5 text-blue-600 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-900">Upload Company Logo</h3>
-        {hasLogo && exhibitor.logo.approved && (
+        <Upload className="h-5 w-5 text-green-600 mr-2" />
+        <h3 className="text-lg font-semibold text-gray-900">Company Logo</h3>
+        {hasLogo && (
           <CheckCircle className="h-5 w-5 text-green-600 ml-2" />
         )}
       </div>
@@ -83,7 +83,7 @@ const LogoUpload = ({ exhibitor, onUpdate }) => {
           <div className="flex space-x-3">
             <button
               onClick={() => setShowUpload(true)}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
             >
               <Upload className="h-4 w-4 mr-2" />
               Replace Logo
@@ -94,16 +94,16 @@ const LogoUpload = ({ exhibitor, onUpdate }) => {
         <div className="space-y-4">
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
               isDragActive
-                ? 'border-blue-400 bg-blue-50'
-                : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                ? 'border-green-400 bg-green-50'
+                : 'border-gray-300 hover:border-green-400 hover:bg-gray-50'
             }`}
           >
             <input {...getInputProps()} />
             <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             {isDragActive ? (
-              <p className="text-blue-600">Drop the logo here...</p>
+              <p className="text-green-600">Drop the logo here...</p>
             ) : (
               <div>
                 <p className="text-lg font-medium text-gray-900 mb-2">

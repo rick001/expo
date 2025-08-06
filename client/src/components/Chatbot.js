@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, MessageCircle, Bot } from 'lucide-react';
+import { Bot, Send, X } from 'lucide-react';
 
 const Chatbot = ({ onClose }) => {
   const [messages, setMessages] = useState([
@@ -103,7 +103,7 @@ const Chatbot = ({ onClose }) => {
   return (
     <div className="fixed bottom-4 right-4 w-96 h-96 bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col z-50">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-blue-600 text-white rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-green-600 text-white rounded-t-lg">
         <div className="flex items-center">
           <Bot className="h-5 w-5 mr-2" />
           <span className="font-medium">Smart Assistant</span>
@@ -124,9 +124,9 @@ const Chatbot = ({ onClose }) => {
             className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-xs px-3 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg max-w-xs ${
                 message.type === 'user'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-900'
               }`}
             >
@@ -160,13 +160,13 @@ const Chatbot = ({ onClose }) => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
             disabled={isTyping}
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isTyping}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />
           </button>

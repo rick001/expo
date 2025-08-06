@@ -6,17 +6,18 @@ import {
   Users, 
   CheckCircle, 
   X, 
-  Clock, 
+  Eye,
+  ArrowUpRight,
+  Settings,
+  RefreshCw,
+  Plus,
   Building2,
   Image,
-  FileText,
-  ArrowUpRight,
-  Eye,
-  Settings
+  FileText
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [exhibitors, setExhibitors] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -154,20 +155,31 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Building2 className="h-8 w-8 text-blue-600 mr-3" />
+              <img 
+                src="/sbe-logo-greenblock-resized.png" 
+                alt="Smart Exhibitor Portal Logo" 
+                className="h-10 w-10 sm:h-12 sm:w-12 object-contain mr-3 sm:mr-4"
+              />
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Smart Exhibitor Portal - Admin
+                <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  Admin Dashboard
                 </h1>
-                <p className="text-sm text-gray-500">
-                  Welcome, {user?.contactName}
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Smart Exhibitor Portal Management
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <button
+                onClick={fetchAdminData}
+                className="p-2 text-gray-600 hover:text-green-600 transition-colors"
+                title="Refresh Dashboard"
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
+              <button
                 onClick={handleResetDemo}
-                className="flex items-center px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors shadow-md"
+                className="flex items-center px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
                 title="Reset database for fresh demo presentation"
               >
                 <Settings className="h-4 w-4 mr-1" />
@@ -201,7 +213,7 @@ const AdminDashboard = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700'
+                      ? 'bg-green-100 text-green-700'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -220,7 +232,7 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
-                  <Users className="h-8 w-8 text-blue-600 mr-3" />
+                  <Users className="h-8 w-8 text-green-600 mr-3" />
                   <div>
                     <p className="text-sm text-gray-600">Total Exhibitors</p>
                     <p className="text-2xl font-bold text-gray-900">{stats.totalExhibitors || 0}</p>
@@ -278,7 +290,7 @@ const AdminDashboard = () => {
                       </span>
                       <button
                         onClick={() => setSelectedExhibitor(exhibitor)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-green-600 hover:text-green-800"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
@@ -294,12 +306,12 @@ const AdminDashboard = () => {
         {activeTab === 'exhibitors' && (
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">All Exhibitors</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Exhibitor Management</h3>
               <button
                 onClick={() => setShowAddExhibitor(true)}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                className="flex items-center px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
               >
-                <Users className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-2" />
                 Add Exhibitor
               </button>
             </div>
@@ -355,7 +367,7 @@ const AdminDashboard = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={() => setSelectedExhibitor(exhibitor)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-green-600 hover:text-green-900"
                         >
                           View Details
                         </button>
@@ -569,11 +581,12 @@ const AdminDashboard = () => {
                   </label>
                   <input
                     type="email"
-                    required
+                    name="email"
                     value={newExhibitor.email}
                     onChange={(e) => setNewExhibitor({...newExhibitor, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="exhibitor@company.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Email address"
+                    required
                   />
                 </div>
                 
@@ -583,11 +596,12 @@ const AdminDashboard = () => {
                   </label>
                   <input
                     type="password"
-                    required
+                    name="password"
                     value={newExhibitor.password}
                     onChange={(e) => setNewExhibitor({...newExhibitor, password: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="password123"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Password"
+                    required
                   />
                 </div>
                 
@@ -597,11 +611,12 @@ const AdminDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    required
+                    name="companyName"
                     value={newExhibitor.companyName}
                     onChange={(e) => setNewExhibitor({...newExhibitor, companyName: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Demo Company"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Company name"
+                    required
                   />
                 </div>
                 
@@ -611,11 +626,12 @@ const AdminDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    required
+                    name="contactName"
                     value={newExhibitor.contactName}
                     onChange={(e) => setNewExhibitor({...newExhibitor, contactName: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="John Doe"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Contact name"
+                    required
                   />
                 </div>
                 
@@ -624,11 +640,12 @@ const AdminDashboard = () => {
                     Phone
                   </label>
                   <input
-                    type="tel"
+                    type="text"
+                    name="phone"
                     value={newExhibitor.phone}
                     onChange={(e) => setNewExhibitor({...newExhibitor, phone: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+1 (555) 123-4567"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Phone number"
                   />
                 </div>
                 
@@ -637,11 +654,12 @@ const AdminDashboard = () => {
                     Website
                   </label>
                   <input
-                    type="url"
+                    type="text"
+                    name="website"
                     value={newExhibitor.website}
                     onChange={(e) => setNewExhibitor({...newExhibitor, website: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Website URL"
                   />
                 </div>
                 
@@ -651,10 +669,11 @@ const AdminDashboard = () => {
                   </label>
                   <input
                     type="text"
+                    name="boothNumber"
                     value={newExhibitor.boothNumber}
                     onChange={(e) => setNewExhibitor({...newExhibitor, boothNumber: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="A101"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Booth number"
                   />
                 </div>
                 
@@ -663,9 +682,10 @@ const AdminDashboard = () => {
                     Booth Size
                   </label>
                   <select
+                    name="boothSize"
                     value={newExhibitor.boothSize}
                     onChange={(e) => setNewExhibitor({...newExhibitor, boothSize: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     <option value="10x10">10x10 ft</option>
                     <option value="10x20">10x20 ft</option>
@@ -679,9 +699,10 @@ const AdminDashboard = () => {
                     Payment Status
                   </label>
                   <select
+                    name="paymentStatus"
                     value={newExhibitor.paymentStatus}
                     onChange={(e) => setNewExhibitor({...newExhibitor, paymentStatus: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     <option value="Pending">Pending</option>
                     <option value="Partial">Partial</option>
@@ -701,9 +722,9 @@ const AdminDashboard = () => {
                 <button
                   type="submit"
                   disabled={addingExhibitor}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {addingExhibitor ? 'Creating...' : 'Create Exhibitor'}
+                  {addingExhibitor ? 'Adding...' : 'Add Exhibitor'}
                 </button>
               </div>
             </form>
