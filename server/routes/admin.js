@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const Exhibitor = require('../models/Exhibitor');
 
 const router = express.Router();
@@ -231,10 +232,13 @@ router.post('/exhibitors', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Exhibitor with this email already exists' });
     }
 
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new exhibitor
     const exhibitor = new Exhibitor({
       email,
-      password, // Will be hashed by the model
+      password: hashedPassword, // Use hashed password
       companyName,
       contactName,
       phone,
