@@ -13,6 +13,27 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Middleware to handle malformed URLs and URI decoding errors
+app.use((req, res, next) => {
+  try {
+    // Check if the URL contains malformed encoding patterns (common attack vectors)
+    const malformedPatterns = ['%C0', '%C1', '%C2', '%C3', '%C4', '%C5', '%C6', '%C7', '%C8', '%C9', '%CA', '%CB', '%CC', '%CD', '%CE', '%CF'];
+    const hasMalformedEncoding = malformedPatterns.some(pattern => req.url.includes(pattern));
+    
+    if (hasMalformedEncoding) {
+      console.log(`Malformed URL detected and blocked: ${req.url}`);
+      return res.status(400).json({ error: 'Invalid URL encoding' });
+    }
+    
+    // Try to decode the URL to catch any URI decoding errors
+    decodeURIComponent(req.url);
+    next();
+  } catch (error) {
+    console.log(`URI decoding error for URL: ${req.url}`);
+    return res.status(400).json({ error: 'Invalid URL encoding' });
+  }
+});
+
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
@@ -65,10 +86,35 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-// Error handling middleware
+// Global error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err.message);
+  
+  // Handle URI decoding errors specifically
+  if (err instanceof URIError || err.message.includes('Failed to decode param')) {
+    console.log(`URI decoding error handled: ${req.url}`);
+    return res.status(400).json({ error: 'Invalid URL encoding' });
+  }
+  
+  // Handle other errors
   res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  if (err instanceof URIError || err.message.includes('Failed to decode param')) {
+    console.log('URI decoding error caught globally:', err.message);
+    return;
+  }
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  if (reason instanceof URIError || (reason && reason.message && reason.message.includes('Failed to decode param'))) {
+    console.log('URI decoding error caught in unhandled rejection:', reason.message);
+    return;
+  }
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 app.listen(PORT, () => {
